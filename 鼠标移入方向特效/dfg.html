@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="jquery.min.js"></script>
+    <title>Title</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .wrap {
+            width: 300px;
+            height: 200px;
+            background: #33aa00;
+            position: relative;
+            overflow: hidden;
+            margin: 10px;
+            float: left;
+        }
+
+        .mask {
+            width: 300px;
+            height: 200px;
+            background: blue;
+            position: absolute;
+            top: -300px;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="mask"></div>
+</div>
+<div class="wrap">
+    <div class="mask"></div>
+</div>
+<div class="wrap">
+    <div class="mask"></div>
+</div>
+<div class="wrap">
+    <div class="mask"></div>
+</div>
+<div class="wrap">
+    <div class="mask"></div>
+</div>
+<div class="wrap">
+    <div class="mask"></div>
+</div>
+</body>
+<script>
+    $(".wrap").bind("mouseenter mouseleave",
+        function (e) {
+//得到容器的宽度
+            var w = $(this).width();
+//得到容器的高度
+            var h = $(this).height();
+            var x = (e.pageX - this.offsetLeft - (w / 2)) * (w > h ? (h / w) : 1);
+            var y = (e.pageY - this.offsetTop - (h / 2)) * (h > w ? (w / h) : 1);
+            var direction = Math.round((((Math.atan2(y, x) * (180 / Math.PI)) + 180) / 90) + 3) % 4;
+            var eventType = e.type;
+//我们定义子容器起始的坐标
+            var startX = 0;
+            var startY = 0;
+            switch (direction) {
+//当从上方进入时
+                case 0:
+                    startX = 0  //横坐标起始为0,即子容器的left值为0
+                    startY = h * -1;
+                    ; //而高度等于负的容器高度,即子容器的top为-h
+                    break;
+//右
+                case 1:
+                    startX = w; //子容器的left值即为父容器的宽度
+                    startY = 0; //子容器的top值为0
+                    break;
+//下
+                case 2:
+                    startX = 0; //子容器的left值即为0
+                    startY = h; //子容器的top值即为父容器的高度
+                    break;
+//左
+                case 3:
+                    startX = w * -1; //子容器的left值即为父容器的宽度负数
+                    startY = 0; //子容器的top值即为0
+                    break;
+            }
+            if (e.type == 'mouseenter') {
+//当鼠标进入时，先将子容器位置重置于startX, startY, 然后通过animate函数实现动画转变
+                $(this).children(".mask").css({'left': startX, 'top': startY}).stop().animate({'left': 0, top: 0}, 300);
+            } else {
+//当鼠标离开时,子容器从当前位置退出
+                $(this).children(".mask").stop().animate({'left': startX, 'top': startY}, 300);
+            }
+
+
+
+        });
+</script>
+</html>
