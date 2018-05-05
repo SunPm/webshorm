@@ -1,82 +1,215 @@
-<!--[if IE 8 ]><html class="ie" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US"> <![endif]-->
-<!--[if (gte IE 9)|!(IE)]><!-->
-<!DOCTYPE html>
-<html lang="en-US">
-    <!--<![endif]-->
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SEM链接生成小工具</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <style media="screen">
+        .table {
+            text-align: center;
+        }
 
-    <head>
-        <meta charset="utf-8">
-        <title>
-            IPM-Blog-404
-        </title>
-       
-        <!--[if lt IE 9]>
-            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-        <![endif]-->
-        
-        <!-- CSS -->
-        <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,900' rel='stylesheet' type='text/css'><!-- Styles -->
-        <link href="http://p79k4e2po.bkt.clouddn.com/404/css/loader.css" rel="stylesheet" type="text/css">
-        <link href="http://p79k4e2po.bkt.clouddn.com/404/css/normalize.css" rel="stylesheet" type="text/css">
-        <link rel="stylesheet" href="http://p79k4e2po.bkt.clouddn.com/404/css/font-awesome.min.css">
-        <link href="http://p79k4e2po.bkt.clouddn.com/404/css/style.css" rel="stylesheet" type="text/css">
-        <!-- Javascript -->
-        <script src="http://p79k4e2po.bkt.clouddn.com/404/js/jquery.js"></script>
-    </head>
-    <body>
-        <div class="preloader">
-            <div class="loading">
-                <h2>
-                    Loading...
-                </h2>
-                <span class="progress"></span>
-            </div>
-        </div>
+        .convert, .copy {
+            width: 240px;
+            height: 40px;
+        }
 
-        <div class="wrapper">
-            <ul class="scene unselectable" data-friction-x="0.1" data-friction-y="0.1" data-scalar-x="25" data-scalar-y="15" id="scene">
-                <li class="layer" data-depth="0.00">
-                </li>
-                <!-- BG -->
+        input {
+            width: 280px;
+        }
 
-                <li class="layer" data-depth="0.10">
-                    <div class="background">
-                    </div>
-                </li>
+        select {
+            width: 100px;
+        }
 
-                <!-- Hero -->
+        .test {
+            position: absolute;
+            z-index: -99;
+            height: 10px;
+        }
+    </style>
 
-                <li class="layer" data-depth="0.20">
-                    <div class="title">
-                        <h2>
-                            IMMINENT
-                        </h2>
-                        <span class="line"></span>
-                    </div>
-                </li>
+</head>
+<body style="text-align: center;">
+<h2>SEM链接生成小工具</h2>
+<textarea rows="10" style="margin:0 auto;width: 100%;" class="content"></textarea>
+<hr>
+<span>推广平台：</span>
+<input type="text" list="test" name="utm_source">
+<datalist id="test">
+    <option>baidu</option>
+    <option>sogou</option>
+    <option>sm</option>
+    <option>360</option>
+</datalist>
+<span>方式：</span>
+<input type="text" list="test1" name="utm_medium">
+<datalist id="test1">
+    <option>cpc</option>
+</datalist>
+<span>PC:</span>
+<input type="text" name="pc" value="">
+<span>WAP:</span>
+<input type="text" name="wap" value="">
+<hr>
+<button class="convert">转换数据</button>
+<button class="copy">复制数据</button>
+<hr>
+<textarea class="test"></textarea>
+<table class="table table-bordered table-hover" id="mytable">
+    <tr class="info">
+        <td>推广计划名称</td>
+        <td>推广单元名称</td>
+        <td>关键词名称</td>
+        <td>匹配模式</td>
+        <td>出价</td>
 
-                <li class="layer" data-depth="0.25">
-                    <div class="sphere">
-                        <img alt="sphere" src="http://p79k4e2po.bkt.clouddn.com/404/images/sphere.png">
-                    </div>
-                </li>
 
-                <li class="layer" data-depth="0.30">
-                    <div class="hero">
-                        <h1 id="countdown">
-                            
-                        </h1>
+        <td>访问URL</td>
+        <td>移动访问URL</td>
+        <td>操作</td>
+    </tr>
+    <tr>
+        <td colspan="8" class="danger">
+            <button style="width: 0px;position:absolute;z-index:-9" class="btn-add"></button>
+        </td>
+    </tr>
+</table>
 
-                        <p class="sub-title"">距离2019元旦倒计时</p>
-                    </div>
-                </li>
-                
-            </ul>
-        </div>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/table.js"></script>
+<script type="text/javascript">
 
-        <!-- Javascript -->
-        <script src="http://p79k4e2po.bkt.clouddn.com/404/js/plugins.js"></script> 
-        <script src="http://p79k4e2po.bkt.clouddn.com/404/js/jquery.countdown.min.js"></script> 
-        <script src="http://p79k4e2po.bkt.clouddn.com/main.js"></script>
-    </body>
+    localStorage.removeItem('tableList');
+
+    $(function () {
+
+        $(".convert").click(function () {
+            var flag = true;
+            $("input").each(function (index) {
+
+                if (index == 3) {
+                    alert(1);
+                } else {
+                    if ($(this).val() == "") {
+                        alert("【" + $(this).prev().text() + "】 不能为空！！！");
+                        flag = false;
+                        return false;
+                    }
+                }
+            })
+
+            if (!flag) {
+                return false;
+            }
+            // console.dir($("input"));
+            localStorage.removeItem('tableList');
+            var utm_source = $("[name='utm_source']").val();
+            var utm_medium = $("[name='utm_medium']").val();
+            var pc = $("[name='pc']").val();
+            var wap = $("[name='wap']").val();
+            pc.match(/=/) ? pc += "&" : (pc.match(/\?/) ? pc : pc += "?");
+            wap.match(/=/) ? wap += "&" : (wap.match(/\?/) ? wap : wap += "?");
+
+            trs = $(".content").val().split("\n");
+
+            new_tds = [];
+            new_trs = [];
+
+            for (var i = 0; i < trs.length; i++) {
+
+                td = trs[i].split("\t");
+                td = td.slice(0, 5);
+                // console.dir(td);
+                if (td[0] !== "") {
+                    if (td.length < 5) {
+                        alert("请检查输入数据列数！！！");
+                        return false;
+                    }
+                }
+
+
+                function checkurl(str) {
+                    return str.match(/http|www/);
+
+                }
+
+                if (td.some(checkurl)) {
+                    alert("输入数据不能通过转换！！！请检查输入数据是否正确！");
+                    return false;
+                }
+
+                pc_url = pc + "utm_source=" + utm_source + "&utm_medium=" + utm_medium + "&utm_term=" + td[0] + "&utm_content=" + td[1] + "&utm_campaign=" + td[2];
+                wap_url = wap + "utm_source=" + utm_source + "&utm_medium=" + utm_medium + "&utm_term=" + td[0] + "&utm_content=" + td[1] + "&utm_campaign=" + td[2];
+                // alert(pc_url);
+                if (td[0] !== "") {
+                    td.push(pc_url);
+                    td.push(wap_url);
+                    new_tds.push(td);
+                    $(".btn-add").trigger("click");
+                }
+            }
+            $("[index]").each(function (j) {
+
+                $(this).children().each(function (k) {
+                    $(this).html(new_tds[j][k]);
+                })
+                $("input[name='wap']").val() == "" ? ($("td[data-role='wap_url']").html("")) : "";
+            })
+
+            back_str = "";
+            back_arr = [];
+            for (m = 0; m < new_tds.length; m++) {
+                back_arr[m] = new_tds[m].join("\t");
+                back_str += new_tds[m].join("\t") + "\n";
+
+            }
+            // console.dir(encodeURI(back_str));
+            localStorage.tableList = JSON.stringify(new_tds);
+        })
+
+        $('table').on('click', '.del', function () {
+            $(this).parent().parent().remove();
+        })
+
+        function getTableContent() {
+            var new_string = "";
+            var data = [];
+            for (var o = 0; o < $("[index]").size(); o++) {
+                $("[index=" + o + "]").children().filter("[contenteditable]").each(function () {
+
+                    if ($(this).index() == 5 || $(this).index() == 6) {
+                        if ($("input[name='wap']").val() == "" && $(this).index() == 6) {
+                            alert(2)
+                        } else {
+                            new_string += encodeURI($(this).html()) + "\t";
+                        }
+                    } else {
+
+                        new_string += $(this).html() + "\t";
+                    }
+
+                })
+                new_string += "++++++++++++++\n";
+            }
+            return new_string;
+        }
+
+        $(".copy").click(function () {
+            // console.dir(getTableContent());
+            $(".test").val(getTableContent().replace(/&amp;/g, "&"));
+            $(".test").trigger("click");
+
+        })
+        $(".test").click(function () {
+            $(this).select();
+            document.execCommand("copy");
+
+        })
+    })
+</script>
+</body>
 </html>
